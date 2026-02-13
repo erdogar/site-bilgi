@@ -5,123 +5,73 @@
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <title>Site Bilgi Sistemi</title>
 <style>
-body {
-  margin: 0;
-  font-family: 'Segoe UI', sans-serif;
-  background: #f0f2f5;
-  display: flex;
-  justify-content: center;
-  align-items: center;
-  min-height: 100vh;
-}
-.container {
-  width: 100%;
-  max-width: 400px;
-  text-align: center;
-}
-.card {
-  background: #fff;
-  border-radius: 12px;
-  box-shadow: 0 4px 15px rgba(0,0,0,0.1);
-  padding: 20px;
-  display: flex;
-  flex-direction: column;
-  gap: 10px;
-  margin-bottom: 20px;
-}
-input, textarea, button {
-  padding: 10px;
-  border-radius: 8px;
-  border: 1px solid #ccc;
-  width: 100%;
-  font-size: 16px;
-}
-button {
-  cursor: pointer;
-  background: #4caf50;
-  color: #fff;
-  border: none;
-  transition: 0.3s;
-}
-button:hover {
-  background: #45a049;
-}
-textarea {
-  resize: none;
-  height: 60px;
-}
-img.mockup {
-  width: 100%;
-  border-radius: 10px;
-  margin-top: 10px;
-  box-shadow: 0 3px 8px rgba(0,0,0,0.1);
-}
-#arizaList div {
-  border: 1px solid #ccc;
-  border-radius: 8px;
-  padding: 10px;
-  margin: 10px 0;
-}
+body { margin:0; font-family: 'Segoe UI', sans-serif; background:#f0f2f5; display:flex; justify-content:center; align-items:center; min-height:100vh;}
+.container { width:100%; max-width:400px; text-align:center;}
+.card { background:#fff; border-radius:12px; box-shadow:0 4px 15px rgba(0,0,0,0.1); padding:20px; display:flex; flex-direction:column; gap:10px; margin-bottom:20px;}
+input, textarea, button { padding:10px; border-radius:8px; border:1px solid #ccc; width:100%; font-size:16px;}
+button { cursor:pointer; background:#4caf50; color:#fff; border:none; transition:0.3s;}
+button:hover { background:#45a049;}
+textarea { resize:none; height:60px;}
+img.mockup { width:100%; border-radius:10px; margin-top:10px; box-shadow:0 3px 8px rgba(0,0,0,0.1);}
+#arizaList div { border:1px solid #ccc; border-radius:8px; padding:10px; margin:10px 0;}
 </style>
 </head>
 <body>
 <div class="container">
 
-  <!-- Kullanıcı Türü Seçimi -->
-  <div class="card" id="userTypeCard">
-    <h2>Hoşgeldiniz</h2>
-    <p>Devam etmek için kullanıcı tipinizi seçin:</p>
-    <button onclick="selectUserType('sakin')">Site Sakini</button>
-    <button onclick="selectUserType('yonetici')">Site Yöneticisi</button>
-    <img class="mockup" src="https://i.ibb.co/6N0rXhz/mockup1.png" alt="Mockup Giriş">
-  </div>
+<!-- Kullanıcı Türü Seçimi -->
+<div class="card" id="userTypeCard">
+  <h2>Hoşgeldiniz</h2>
+  <p>Devam etmek için kullanıcı tipinizi seçin:</p>
+  <button onclick="selectUserType('sakin')">Site Sakini</button>
+  <button onclick="selectUserType('yonetici')">Site Yöneticisi</button>
+  <img class="mockup" src="https://i.ibb.co/6N0rXhz/mockup1.png" alt="Mockup Giriş">
+</div>
 
-  <!-- Kayıt / Giriş Ekranı -->
-  <div class="card" id="authCard" style="display:none;">
-    <h2 id="authTitle">Giriş / Kayıt</h2>
-    <input type="email" id="email" placeholder="Email">
-    <input type="password" id="password" placeholder="Şifre">
-    <button id="loginBtn">Giriş Yap</button>
-    <button id="registerBtn">Kayıt Ol</button>
-    <img class="mockup" src="https://i.ibb.co/3S4jR0n/mockup2.png" alt="Mockup Kayıt">
-  </div>
+<!-- Kayıt / Giriş Ekranı -->
+<div class="card" id="authCard" style="display:none;">
+  <h2 id="authTitle">Giriş / Kayıt</h2>
+  <input type="email" id="email" placeholder="Email">
+  <input type="password" id="password" placeholder="Şifre">
+  <button id="loginBtn">Giriş Yap</button>
+  <button id="registerBtn">Kayıt Ol</button>
+  <img class="mockup" src="https://i.ibb.co/3S4jR0n/mockup2.png" alt="Mockup Kayıt">
+</div>
 
-  <!-- Mesaj / Arıza Ekranı -->
-  <div class="card" id="mainCard" style="display:none;">
-    <h2>Mesaj ve Arıza</h2>
-    <textarea id="message" placeholder="Mesaj yaz..."></textarea>
-    <button id="sendMsgBtn">Gönder</button>
-    <input type="file" id="photo">
-    <button id="uploadPhotoBtn">Foto Yükle</button>
-    <h3>Arıza Bildirimleri</h3>
-    <div id="arizaList"><p>Henüz arıza bildirimi yok.</p></div>
-    <button id="logoutBtn">Çıkış Yap</button>
-    <img class="mockup" src="https://i.ibb.co/Lz2j3qM/mockup3.png" alt="Mockup Mesaj">
-  </div>
+<!-- Mesaj / Arıza Ekranı -->
+<div class="card" id="mainCard" style="display:none;">
+  <h2>Mesaj ve Arıza</h2>
+  <textarea id="message" placeholder="Mesaj yaz..."></textarea>
+  <button id="sendMsgBtn">Gönder</button>
+  <input type="file" id="photo">
+  <button id="uploadPhotoBtn">Foto Yükle</button>
+  <h3>Arıza Bildirimleri</h3>
+  <div id="arizaList"><p>Henüz arıza bildirimi yok.</p></div>
+  <button id="logoutBtn">Çıkış Yap</button>
+  <img class="mockup" src="https://i.ibb.co/Lz2j3qM/mockup3.png" alt="Mockup Mesaj">
+</div>
 
 </div>
 
-<script type="module">
-// Firebase SDK
-import { initializeApp } from "https://www.gstatic.com/firebasejs/12.9.0/firebase-app.js";
-import { getDatabase, ref, push, set, onValue } from "https://www.gstatic.com/firebasejs/12.9.0/firebase-database.js";
-import { getAuth, createUserWithEmailAndPassword, signInWithEmailAndPassword, signOut } from "https://www.gstatic.com/firebasejs/12.9.0/firebase-auth.js";
-
+<!-- Firebase UMD Scriptler -->
+<script src="https://www.gstatic.com/firebasejs/12.9.0/firebase-app.js"></script>
+<script src="https://www.gstatic.com/firebasejs/12.9.0/firebase-auth.js"></script>
+<script src="https://www.gstatic.com/firebasejs/12.9.0/firebase-database.js"></script>
+<script>
 // Firebase config
 const firebaseConfig = {
   apiKey: "AIzaSyCSqecAGSBDe-PsA-zP77m-j4a59iTbTXE",
   authDomain: "site-bilgi-ace91.firebaseapp.com",
+  databaseURL: "https://site-bilgi-ace91-default-rtdb.firebaseio.com",
   projectId: "site-bilgi-ace91",
   storageBucket: "site-bilgi-ace91.appspot.com",
   messagingSenderId: "495243926810",
-  appId: "1:495243926810:web:8add0201eaa0fa9999e0a3",
-  measurementId: "G-WCBREQDWX1"
+  appId: "1:495243926810:web:8add0201eaa0fa9999e0a3"
 };
+firebase.initializeApp(firebaseConfig);
 
-// Initialize
-const app = initializeApp(firebaseConfig);
-const db = getDatabase(app);
-const auth = getAuth(app);
+const auth = firebase.auth();
+const db = firebase.database();
 
 // DOM
 const userTypeCard = document.getElementById("userTypeCard");
@@ -153,25 +103,21 @@ registerBtn.onclick = () => {
   if(userType !== 'sakin') return alert("Yönetici kullanıcı oluşturamaz");
   const email = emailInput.value;
   const password = passwordInput.value;
-  createUserWithEmailAndPassword(auth, email, password)
+  auth.createUserWithEmailAndPassword(email,password)
     .then(()=>alert("Kayıt başarılı ✅"))
     .catch(e=>alert(e.message));
 };
+
 loginBtn.onclick = () => {
   const email = emailInput.value;
   const password = passwordInput.value;
-  signInWithEmailAndPassword(auth, email, password)
-    .then(()=>{
-      authCard.style.display = "none";
-      mainCard.style.display = "flex";
-    })
+  auth.signInWithEmailAndPassword(email,password)
+    .then(()=>{ authCard.style.display="none"; mainCard.style.display="flex"; })
     .catch(e=>alert(e.message));
 };
+
 logoutBtn.onclick = () => {
-  signOut(auth).then(()=>{
-    authCard.style.display = "flex";
-    mainCard.style.display = "none";
-  });
+  auth.signOut().then(()=>{ authCard.style.display="flex"; mainCard.style.display="none"; });
 };
 
 // Mesaj Gönder
@@ -179,8 +125,7 @@ sendMsgBtn.onclick = () => {
   const msg = messageInput.value;
   const user = auth.currentUser;
   if(!msg) return alert("Mesaj boş");
-  const msgRef = push(ref(db,"mesajlar"));
-  set(msgRef,{
+  db.ref("mesajlar").push({
     uid: user.uid,
     message: msg,
     timestamp: Date.now()
@@ -205,9 +150,7 @@ uploadPhotoBtn.onclick = async () => {
     const data = await response.json();
     if(data.success){
       const imageUrl = data.data.url;
-      const arizaRef = ref(db,"ariza");
-      const newArizaRef = push(arizaRef);
-      set(newArizaRef,{
+      db.ref("ariza").push({
         uid: user.uid,
         photo: imageUrl,
         timestamp: Date.now()
@@ -218,10 +161,9 @@ uploadPhotoBtn.onclick = async () => {
 };
 
 // Arıza Listesi
-const arizaRef = ref(db,"ariza");
-onValue(arizaRef,(snapshot)=>{
+db.ref("ariza").on("value",(snapshot)=>{
   const data = snapshot.val();
-  arizaListDiv.innerHTML = "";
+  arizaListDiv.innerHTML="";
   if(data){
     Object.keys(data).forEach(key=>{
       const item = data[key];
