@@ -1,0 +1,124 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <meta charset="UTF-8">
+  <title>Site Bilgi Sistemi</title>
+</head>
+<body>
+
+<h2>Site Bilgi Sistemi</h2>
+
+<div id="auth">
+  <input id="email" placeholder="Email"><br><br>
+  <input id="password" type="password" placeholder="Şifre"><br><br>
+  <button onclick="register()">Kayıt Ol</button>
+  <button onclick="login()">Giriş Yap</button>
+</div>
+
+<div id="app" style="display:none;">
+  <h3>Mesaj Gönder</h3>
+  <input id="message" placeholder="Mesaj yaz">
+  <button onclick="sendMessage()">Gönder</button>
+
+  <h3>Arıza Bildir (Fotoğraf)</h3>
+  <input type="file" id="photo">
+  <button onclick="uploadPhoto()">Yükle</button>
+
+  <h3>Aidat Bilgisi</h3>
+  <button onclick="showAidat()">Aidat Göster</button>
+  <p id="aidatText"></p>
+
+  <br>
+  <button onclick="logout()">Çıkış Yap</button>
+</div>
+
+<script type="module">
+import { initializeApp } from "https://www.gstatic.com/firebasejs/12.9.0/firebase-app.js";
+import { getAuth, createUserWithEmailAndPassword, signInWithEmailAndPassword, signOut } 
+from "https://www.gstatic.com/firebasejs/12.9.0/firebase-auth.js";
+import { getDatabase, ref, set, push, onValue } 
+from "https://www.gstatic.com/firebasejs/12.9.0/firebase-database.js";
+import { getStorage, ref as sRef, uploadBytes, getDownloadURL } 
+from "https://www.gstatic.com/firebasejs/12.9.0/firebase-storage.js";
+
+const firebaseConfig = {
+  apiKey: "AIzaSyCSqecAGSBDe-PsA-zP77m-j4a59iTbTXE",
+  authDomain: "site-bilgi-ace91.firebaseapp.com",
+  projectId: "site-bilgi-ace91",
+  storageBucket: "site-bilgi-ace91.firebasestorage.app",
+  messagingSenderId: "495243926810",
+  appId: "1:495243926810:web:8add0201eaa0fa9999e0a3",
+  measurementId: "G-WCBREQDWX1"
+};
+
+const app = initializeApp(firebaseConfig);
+const auth = getAuth();
+const db = getDatabase();
+const storage = getStorage();
+
+window.register = function() {
+  const email = document.getElementById("email").value;
+  const pass = document.getElementById("password").value;
+
+  createUserWithEmailAndPassword(auth, email, pass)
+    .then(() => alert("Kayıt başarılı"))
+    .catch(err => alert(err.message));
+}
+
+window.login = function() {
+  const email = document.getElementById("email").value;
+  const pass = document.getElementById("password").value;
+
+  signInWithEmailAndPassword(auth, email, pass)
+    .then(() => {
+      document.getElementById("auth").style.display = "none";
+      document.getElementById("app").style.display = "block";
+    })
+    .catch(err => alert(err.message));
+}
+
+window.logout = function() {
+  signOut(auth);
+  location.reload();
+}
+
+window.sendMessage = function() {
+  const msg = document.getElementById("message").value;
+  const user = auth.currentUser;
+
+  push(ref(db, "messages"), {
+    uid: user.uid,
+    text: msg
+  });
+  alert("Mesaj gönderildi");
+}
+
+window.uploadPhoto = function() {
+  const file = document.getElementById("photo").files[0];
+  const user = auth.currentUser;
+
+  const storageRef = sRef(storage, "ariza/" + file.name);
+
+  uploadBytes(storageRef, file).then(() => {
+    getDownloadURL(storageRef).then(url => {
+      push(ref(db, "ariza"), {
+        uid: user.uid,
+        photo: url
+      });
+      alert("Fotoğraf yüklendi");
+    });
+  });
+}
+
+window.showAidat = function() {
+  const user = auth.currentUser;
+
+  onValue(ref(db, "aidat/" + user.uid), (snapshot) => {
+    const data = snapshot.val();
+    document.getElementById("aidatText").innerText = data ? data : "Aidat bilgisi yok";
+  });
+}
+</script>
+
+</body>
+</html>
