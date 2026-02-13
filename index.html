@@ -1,106 +1,177 @@
 <!DOCTYPE html>
-<html>
+<html lang="tr">
 <head>
-  <meta charset="UTF-8">
-  <title>Site Bilgi Sistemi</title>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Site Bilgi Sistemi</title>
+<style>
+body {
+  margin: 0;
+  height: 100vh;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  font-family: 'Segoe UI', sans-serif;
+  background: #f0f2f5;
+}
+
+.container {
+  width: 100%;
+  max-width: 400px;
+  text-align: center;
+}
+
+.auth-card, .main-card {
+  background: #fff;
+  padding: 20px;
+  border-radius: 12px;
+  box-shadow: 0 4px 15px rgba(0,0,0,0.1);
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+}
+
+input, textarea, button {
+  padding: 10px;
+  border-radius: 8px;
+  border: 1px solid #ccc;
+  font-size: 16px;
+  width: 100%;
+}
+
+button {
+  cursor: pointer;
+  background: #4caf50;
+  color: white;
+  border: none;
+  transition: 0.3s;
+}
+
+button:hover {
+  background: #45a049;
+}
+
+textarea {
+  resize: none;
+  height: 60px;
+}
+
+#arizaList div {
+  border: 1px solid #ccc;
+  padding: 10px;
+  margin: 10px 0;
+  border-radius: 5px;
+}
+</style>
 </head>
 <body>
+<div class="container">
 
-<h2>Site Bilgi Sistemi</h2>
+  <!-- Giriş / Kayıt -->
+  <div class="auth-card" id="authCard">
+    <h2>Giriş / Kayıt</h2>
+    <input type="email" id="email" placeholder="Email">
+    <input type="password" id="password" placeholder="Şifre">
+    <button id="loginBtn">Giriş Yap</button>
+    <button id="registerBtn">Kayıt Ol</button>
+  </div>
 
-<div id="auth">
-  <input id="email" placeholder="Email"><br><br>
-  <input id="password" type="password" placeholder="Şifre"><br><br>
-  <button onclick="register()">Kayıt Ol</button>
-  <button onclick="login()">Giriş Yap</button>
-</div>
+  <!-- Mesaj ve Arıza -->
+  <div class="main-card" id="mainCard" style="display:none;">
+    <h2>Mesaj ve Arıza</h2>
+    <textarea id="message" placeholder="Mesaj yaz..."></textarea>
+    <button id="sendMsgBtn">Gönder</button>
+    <input type="file" id="photo">
+    <button id="uploadPhotoBtn">Foto Yükle</button>
+    <h3>Arıza Bildirimleri</h3>
+    <div id="arizaList"><p>Henüz arıza bildirimi yok.</p></div>
+    <button id="logoutBtn">Çıkış Yap</button>
+  </div>
 
-<div id="app" style="display:none;">
-  <h3>Mesaj Gönder</h3>
-  <input id="message" placeholder="Mesaj yaz">
-  <button onclick="sendMessage()">Gönder</button>
-
-  <h3>Arıza Bildir (Fotoğraf)</h3>
-  <input type="file" id="photo">
-  <button onclick="uploadPhoto()">Yükle</button>
-
-  <h3>Aidat Bilgisi</h3>
-  <button onclick="showAidat()">Aidat Göster</button>
-  <p id="aidatText"></p>
-
-  <br>
-  <button onclick="logout()">Çıkış Yap</button>
 </div>
 
 <script type="module">
+// Firebase SDK
 import { initializeApp } from "https://www.gstatic.com/firebasejs/12.9.0/firebase-app.js";
-import { getAuth, createUserWithEmailAndPassword, signInWithEmailAndPassword, signOut } 
-from "https://www.gstatic.com/firebasejs/12.9.0/firebase-auth.js";
-import { getDatabase, ref, set, push, onValue } 
-from "https://www.gstatic.com/firebasejs/12.9.0/firebase-database.js";
-import { getStorage, ref as sRef, uploadBytes, getDownloadURL } 
-from "https://www.gstatic.com/firebasejs/12.9.0/firebase-storage.js";
+import { getDatabase, ref, push, set, onValue } from "https://www.gstatic.com/firebasejs/12.9.0/firebase-database.js";
+import { getAuth, createUserWithEmailAndPassword, signInWithEmailAndPassword, signOut } from "https://www.gstatic.com/firebasejs/12.9.0/firebase-auth.js";
 
+// Firebase config
 const firebaseConfig = {
   apiKey: "AIzaSyCSqecAGSBDe-PsA-zP77m-j4a59iTbTXE",
   authDomain: "site-bilgi-ace91.firebaseapp.com",
   projectId: "site-bilgi-ace91",
-  storageBucket: "site-bilgi-ace91.firebasestorage.app",
+  storageBucket: "site-bilgi-ace91.appspot.com",
   messagingSenderId: "495243926810",
   appId: "1:495243926810:web:8add0201eaa0fa9999e0a3",
   measurementId: "G-WCBREQDWX1"
 };
 
+// Initialize
 const app = initializeApp(firebaseConfig);
-const auth = getAuth();
-const db = getDatabase();
-const storage = getStorage();
+const db = getDatabase(app);
+const auth = getAuth(app);
 
-window.register = function() {
-  const email = document.getElementById("email").value;
-  const pass = document.getElementById("password").value;
+// DOM Elements
+const authCard = document.getElementById("authCard");
+const mainCard = document.getElementById("mainCard");
+const emailInput = document.getElementById("email");
+const passwordInput = document.getElementById("password");
+const loginBtn = document.getElementById("loginBtn");
+const registerBtn = document.getElementById("registerBtn");
+const logoutBtn = document.getElementById("logoutBtn");
+const sendMsgBtn = document.getElementById("sendMsgBtn");
+const messageInput = document.getElementById("message");
+const uploadPhotoBtn = document.getElementById("uploadPhotoBtn");
+const photoInput = document.getElementById("photo");
+const arizaListDiv = document.getElementById("arizaList");
 
-  createUserWithEmailAndPassword(auth, email, pass)
-    .then(() => alert("Kayıt başarılı"))
-    .catch(err => alert(err.message));
-}
+// Auth
+registerBtn.onclick = () => {
+  const email = emailInput.value;
+  const password = passwordInput.value;
+  createUserWithEmailAndPassword(auth, email, password)
+    .then(() => alert("Kayıt başarılı ✅"))
+    .catch(e => alert(e.message));
+};
 
-window.login = function() {
-  const email = document.getElementById("email").value;
-  const pass = document.getElementById("password").value;
-
-  signInWithEmailAndPassword(auth, email, pass)
+loginBtn.onclick = () => {
+  const email = emailInput.value;
+  const password = passwordInput.value;
+  signInWithEmailAndPassword(auth, email, password)
     .then(() => {
-      document.getElementById("auth").style.display = "none";
-      document.getElementById("app").style.display = "block";
+      authCard.style.display = "none";
+      mainCard.style.display = "flex";
     })
-    .catch(err => alert(err.message));
-}
+    .catch(e => alert(e.message));
+};
 
-window.logout = function() {
-  signOut(auth);
-  location.reload();
-}
-
-window.sendMessage = function() {
-  const msg = document.getElementById("message").value;
-  const user = auth.currentUser;
-
-  push(ref(db, "messages"), {
-    uid: user.uid,
-    text: msg
+logoutBtn.onclick = () => {
+  signOut(auth).then(() => {
+    authCard.style.display = "flex";
+    mainCard.style.display = "none";
   });
-  alert("Mesaj gönderildi");
-}
+};
 
-window.uploadPhoto = async function() {
-  const file = document.getElementById("photo").files[0];
+// Mesaj Gönder
+sendMsgBtn.onclick = () => {
+  const msg = messageInput.value;
   const user = auth.currentUser;
+  if(!msg) return alert("Mesaj boş");
+  const msgRef = push(ref(db, "mesajlar"));
+  set(msgRef, {
+    uid: user.uid,
+    message: msg,
+    timestamp: Date.now()
+  });
+  messageInput.value = "";
+};
 
-  if (!file) {
-    alert("Foto seçmedin");
-    return;
-  }
+// Foto Upload (ImgBB)
+uploadPhotoBtn.onclick = async () => {
+  const file = photoInput.files[0];
+  const user = auth.currentUser;
+  if(!file) return alert("Foto seçmedin");
 
   const formData = new FormData();
   formData.append("image", file);
@@ -110,37 +181,42 @@ window.uploadPhoto = async function() {
       method: "POST",
       body: formData
     });
-
     const data = await response.json();
-
-    if (data.success) {
+    if(data.success){
       const imageUrl = data.data.url;
-
-      push(ref(db, "ariza"), {
+      const arizaRef = ref(db,"ariza");
+      const newArizaRef = push(arizaRef);
+      set(newArizaRef,{
         uid: user.uid,
-        photo: imageUrl
+        photo: imageUrl,
+        timestamp: Date.now()
       });
-
       alert("Foto yüklendi ✅");
-    } else {
-      alert("Yükleme başarısız");
-    }
-
-  } catch (error) {
+    } else alert("Yükleme başarısız");
+  } catch(e){
     alert("Hata oluştu");
-    console.error(error);
+    console.error(e);
   }
 };
-  
-window.showAidat = function() {
-  const user = auth.currentUser;
 
-  onValue(ref(db, "aidat/" + user.uid), (snapshot) => {
-    const data = snapshot.val();
-    document.getElementById("aidatText").innerText = data ? data : "Aidat bilgisi yok";
-  });
-}
+// Ariza Listesi
+const arizaRef = ref(db,"ariza");
+onValue(arizaRef,(snapshot)=>{
+  const data = snapshot.val();
+  arizaListDiv.innerHTML = "";
+  if(data){
+    Object.keys(data).forEach(key=>{
+      const item = data[key];
+      const div = document.createElement("div");
+      div.innerHTML = `
+        <p><strong>Kullanıcı UID:</strong> ${item.uid}</p>
+        <p><strong>Zaman:</strong> ${new Date(item.timestamp).toLocaleString()}</p>
+        <img src="${item.photo}" style="max-width:200px; display:block; margin-top:5px;" />
+      `;
+      arizaListDiv.appendChild(div);
+    });
+  } else arizaListDiv.innerHTML = "<p>Henüz arıza bildirimi yok.</p>";
+});
 </script>
-
 </body>
 </html>
